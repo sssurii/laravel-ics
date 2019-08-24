@@ -1,0 +1,27 @@
+{
+    "name": "sssurii/laravel-ics",
+    "description": "Package to generate ics files, email invitation.",
+    "type": "library, plugin, package",
+    "authors": [
+        {
+            "name": "Surinder Singh",
+            "email": "sssurii.dev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "predis/predis": "^2.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "INSAN\\ICS\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "INSAN\\ICS\\ICSServiceProvider"
+            ]
+        }
+    }
+}
