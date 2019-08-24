@@ -10,7 +10,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "predis/predis": "^2.0@dev"
+        
     },
     "autoload": {
         "psr-4": {
