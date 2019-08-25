@@ -52,4 +52,4 @@ If you want cancel already sent invitation, use below code:
 ```
 
 ## Help / Support
-For bug reports, please [open an issue on GitHub](/issues/new).
+For bug reports, please [open an issue on GitHub](https://github.com/sssurii/laravel-ics/issues/new).
