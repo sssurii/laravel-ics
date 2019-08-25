@@ -4,13 +4,13 @@ Laravel package to create iCalendar/ICS files.
 ## Installation
 Install using composer:
 
-`composer require sssurii/laravel-ics`
+	`composer require sssurii/laravel-ics`
 
 
 ## Usage
 1. For Laravel 5.6 or above, simply load class:
 
-`use INSAN\ICS\ICS;`
+	`use INSAN\ICS\ICS;`
 
 2. For laravel 5.5 or below, open your `config/app.php` and add below line under 'providers':
 
