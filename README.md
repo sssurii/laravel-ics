@@ -27,16 +27,17 @@ Then simply load class as above case above.
 
 Set various event details, pass properties as array while initializing class:
 ```
-	$ics_file = new ICS([
-	            'uid' => uniqid(),
-	            'sequence' => 0,
-	            'description' => 'Event Invitation via email.',
-	            'dtstart' => date('Y-m-d 09:00'),
-	            'dtend' => date('Y-m-d 10:00'),
-	            'summary' => 'This is an event invitation sent through email.',
-	            'location' => 'VR Punjab, S.A.S Nagar, Chandigarh',
-	            'url' => 'www.example.com',
-	        ]);
+	$properities = [
+            'uid' => uniqid(),
+            'sequence' => 0,
+            'description' => 'Event Invitation via email.',
+            'dtstart' => date('Y-m-d 09:00'),
+            'dtend' => date('Y-m-d 10:00'),
+            'summary' => 'This is an event invitation sent through email.',
+            'location' => 'VR Punjab, S.A.S Nagar, Chandigarh',
+            'url' => 'www.example.com',
+        ]
+	$ics_file = new ICS();
 	return $ics_file->toString();
 ```
 Some optional properties can be set as below, like set organizer details
@@ -44,12 +45,13 @@ Some optional properties can be set as below, like set organizer details
 	//Optional
 	$ics_file->setOrganizer('Surinder', 'sssurii.dev@gmail.com');
 ```
-If you want cancel already sent invitation, use below code:
+If you want cancel already sent invitation, use additional code to above:
 
 ```
 	//Optional
 	$ics_file->markEventCancel();
 ```
+**Note:** If want to cancel an already sent invitation, you must use same `uid` which was used in invitation you need to cancel.
 
 ## Help / Support
 For bug reports, please [open an issue on GitHub](https://github.com/sssurii/laravel-ics/issues/new).
