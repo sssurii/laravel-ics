@@ -1,7 +1,9 @@
 {
     "name": "sssurii/laravel-ics",
     "description": "Package to generate ics files, email invitation.",
-    "type": "library, plugin, package",
+    "type": "library",
+    "keywords":["laravel", "ics", "event", "invitation", "icalendar"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Surinder Singh",
