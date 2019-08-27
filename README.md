@@ -37,7 +37,7 @@ Set various event details, pass properties as array while initializing class:
             'location' => 'VR Punjab, S.A.S Nagar, Chandigarh',
             'url' => 'www.example.com',
         ]
-	$ics_file = new ICS();
+	$ics_file = new ICS($properities);
 	return $ics_file->toString();
 ```
 Some optional properties can be set as below, like set organizer details
