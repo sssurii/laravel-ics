@@ -14,8 +14,9 @@ jobs:
     - name: Start Sync
       env:
         DEST_DIR: 'www/mcd-repo/laravel-ics'
+        DEPLOY_KEY: ${{ secrets.SECRET_KEY }}
       run: |
-        echo "${{secrets.SECRET_KEY}}" > deploy_key
-        chmod 600 deploy_key
-        ssh -tt -vvv -i deploy_key u668-zznpt3duudzt@mycardirect.co.uk -p 18765 -o StrictHostKeyChecking=no
+        eval `ssh-agent`
+        ssh-add - <<< "${DEPLOY_KEY}"
+        ssh -tt -vvv u668-zznpt3duudzt@mycardirect.co.uk -p 18765 -o StrictHostKeyChecking=no
         cd www/mcd-repo/laravel-ics
