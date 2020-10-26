@@ -1,0 +1,21 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+   
+    - name: Start Sync
+      env:
+        dest: 'u668-zznpt3duudzt@guk1023.siteground.eu:/home/customer/www/staging2.mycardirect.co.uk/public_html/wp-content/themes/mycardirect/'
+      run: |
+        echo "${{secrets.SECRET_KEY}}" > deploy_key
+        chmod 600 deploy_key
+        ssh -tt -i deploy_key u668-zznpt3duudzt@mycardirect.co.uk -p 18765 -o StrictHostKeyChecking=no
+        cd www/mcd-repo/laravel-ics
