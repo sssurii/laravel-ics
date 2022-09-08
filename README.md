@@ -1,5 +1,5 @@
 # laravel-ics
-Laravel package to create iCalendar/ICS files.
+Laravel package to create iCalendar/ICS files. Send new event invitations via Email and can cancel or update already sent invitation.
 
 ## Installation
 Install using composer:
