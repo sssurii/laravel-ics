@@ -6,6 +6,10 @@ Install using composer:
 
 	`composer require sssurii/laravel-ics`
 
+To publish the config, run the vendor publish command:
+
+	`php artisan vendor:publish --provider="INSAN\ICS\ICSServiceProvider" --tag=config`
+
 
 ## Usage
 1. For Laravel 5.6 or above, simply load class:
