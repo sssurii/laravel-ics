@@ -25,6 +25,6 @@ class ICSServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/ics.php' => config_path('ics.php'),
-        ]);
+        ], 'config');
     }
 }
