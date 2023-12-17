@@ -7,12 +7,13 @@ use DateTime;
 class ICS
 {
     protected const DATETIME_FORMAT = 'Ymd\THis\Z';
+    protected const DATE_FORMAT = 'Y-m-d';
 
-    protected $properties = [];
+    protected array $properties = [];
 
-    private $organiser = '';
+    private string $organiser = '';
 
-    private $available_properties = [
+    private array $available_properties = [
         'categories',
         'priority',
         'description',
@@ -25,7 +26,7 @@ class ICS
         'sequence',
     ];
 
-    private $header_properties = [
+    private array $header_properties = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'PRODID:-//hacksw/handcal//NONSGML v1.0//EN',
@@ -52,13 +53,13 @@ class ICS
         }
     }
 
-    public function toString()
+    public function toString(): string
     {
         $rows = $this->buildICSProperties();
         return implode("\r\n", $rows);
     }
 
-    private function buildICSProperties()
+    private function buildICSProperties(): array
     {
         $ics_properties = $this->getDefaultHeaderProperties();
 
@@ -72,8 +73,9 @@ class ICS
         return $ics_properties;
     }
 
-    private function sanitizeValue($value, $attribute) {
-        switch($attribute) {
+    private function sanitizeValue(string $value, string $attribute): string
+    {
+        switch ($attribute) {
             case 'dtend':
             case 'dtstamp':
             case 'dtstart':
@@ -85,38 +87,41 @@ class ICS
         return $value;
     }
 
-    private function formatTimestamp($timestamp) {
+    private function formatTimestamp(string $timestamp)
+    {
         $day_light_start = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('constants.DAY_LIGHT_SAVING_START_MONTH'));
+                                     . config('ics.DAY_LIGHT_SAVING_START_MONTH'));
         $day_light_end = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('constants.DAY_LIGHT_SAVING_END_MONTH'));
+                                     . config('ics.DAY_LIGHT_SAVING_END_MONTH'));
 
         $datetime = new DateTime($timestamp);
-        if (env('DAY_LIGHT_SAVING', false)
-            && $datetime->format(config('constants.DATE')) >= date(config('constants.DATE'), $day_light_start)
-            && $datetime->format(config('constants.DATE')) <= date(config('constants.DATE'), $day_light_end)
+        if (
+            config('ics.DAY_LIGHT_SAVING')
+            && $datetime->format(self::DATE_FORMAT) >= date(self::DATE_FORMAT, $day_light_start)
+            && $datetime->format(self::DATE_FORMAT) <= date(self::DATE_FORMAT, $day_light_end)
         ) {
-            $datetime->modify('-' . config('constants.DAY_LIGHT_SAVING_OFFSET'));
+            $datetime->modify('-' . config('ics.DAY_LIGHT_SAVING_OFFSET'));
         }
 
         return $datetime->format(self::DATETIME_FORMAT);
     }
 
-    private function escapeString($str) {
+    private function escapeString(string $str): string
+    {
         return preg_replace('/([\,;])/', '\\\$1', $str);
     }
 
-    public function setOrganizer($name, $email)
+    public function setOrganizer(string $name, string $email): void
     {
-        $this->organiser = 'ORGANIZER;CN='. $name .':MAILTO:' . $email;
+        $this->organiser = 'ORGANIZER;CN=' . $name . ':MAILTO:' . $email;
     }
 
-    public function getOrganizer()
+    public function getOrganizer(): string
     {
         return $this->organiser;
     }
 
-    public function markEventCancel()
+    public function markEventCancel(): void
     {
         $method_key = array_search('METHOD:REQUEST', $this->header_properties);
 
@@ -125,12 +130,12 @@ class ICS
         }
     }
 
-    private function getDefaultHeaderProperties()
+    private function getDefaultHeaderProperties(): array
     {
         return $this->header_properties;
     }
 
-    private function appendProperties(array $ics_properties)
+    private function appendProperties(array $ics_properties): array
     {
         $properties = $this->buildProperties();
 
@@ -141,10 +146,10 @@ class ICS
         return $ics_properties;
     }
 
-    private function buildProperties()
+    private function buildProperties(): array
     {
         $properties = [];
-        foreach($this->properties as $attribute => $value) {
+        foreach ($this->properties as $attribute => $value) {
             $properties[strtoupper($attribute)] = $value;
         }
 
@@ -153,7 +158,7 @@ class ICS
         return $properties;
     }
 
-    private function addDefaultFooterProperties(array $ics_properties)
+    private function addDefaultFooterProperties(array $ics_properties): array
     {
         $ics_properties[] = 'END:VEVENT';
         $ics_properties[] = 'END:VCALENDAR';

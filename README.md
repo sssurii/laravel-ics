@@ -6,6 +6,10 @@ Install using composer:
 
 	`composer require sssurii/laravel-ics`
 
+To publish the config, run the vendor publish command:
+
+	`php artisan vendor:publish --provider="INSAN\ICS\ICSServiceProvider" --tag=config`
+
 
 ## Usage
 1. For Laravel 5.6 or above, simply load class:
@@ -21,13 +25,13 @@ Install using composer:
 
 INSAN\ICS\ICSServiceProvider::class,
 ```
-Then simply load class as above case above.
+Then simply load class as in step 1.
 
 3. Use package class as below:
 
 Set various event details, pass properties as array while initializing class:
 ```
-	$properities = [
+	$event_properties = [
             'uid' => uniqid(),
             'sequence' => 0,
             'description' => 'Event Invitation via email.',
@@ -36,8 +40,8 @@ Set various event details, pass properties as array while initializing class:
             'summary' => 'This is an event invitation sent through email.',
             'location' => 'VR Punjab, S.A.S Nagar, Chandigarh',
             'url' => 'www.example.com',
-        ]
-	$ics_file = new ICS($properities);
+        ];
+	$ics_file = new ICS($event_properties);
 	return $ics_file->toString();
 ```
 Some optional properties can be set as below, like set organizer details
