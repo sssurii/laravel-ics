@@ -1,6 +1,6 @@
 {
     "name": "sssurii/laravel-ics",
-    "description": "Package to generate ics files, email invitation.",
+    "description": "Laravel package to create iCalendar / ICS files. Send new event invitations via Email and can cancel or update already sent invitation.",
     "type": "library",
     "keywords":["laravel", "ics", "event", "invitation", "icalendar"],
     "license": "MIT",
