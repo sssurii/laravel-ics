@@ -4,6 +4,20 @@
 
 This document summarizes all improvements made to modernize the Laravel ICS package to 2025 standards while keeping it lightweight and easy to use.
 
+## Latest Update: Removed Orchestra/Testbench
+
+**Date:** 2026-02-12
+
+The package has been refactored to remove the Orchestra/Testbench dependency, making it:
+- ✅ **Standalone** - Works in any PHP project, not just Laravel
+- ✅ **Lighter** - Removed 20+ MB heavy dependency
+- ✅ **Faster** - Tests run without Laravel bootstrap overhead
+- ✅ **Still Laravel-compatible** - ServiceProvider handles config automatically
+
+See [WHY-NO-TESTBENCH.md](WHY-NO-TESTBENCH.md) for detailed explanation.
+
+---
+
 ## What Was Improved
 
 ### 1. Package Configuration & Dependencies
@@ -11,15 +25,17 @@ This document summarizes all improvements made to modernize the Laravel ICS pack
 - No version requirements
 - Missing package metadata
 - "minimum-stability": "dev"
+- Heavy test dependencies
 
 **After:**
 - PHP 8.0-8.3 support
-- Laravel 9.x, 10.x, 11.x compatibility
-- Proper dev dependencies (PHPUnit, PHPStan, Pint)
+- Laravel 9.x, 10.x, 11.x compatibility (optional)
+- Lightweight dev dependencies (PHPUnit, PHPStan, Pint only)
 - Complete package metadata (homepage, support links)
 - Stable releases only
+- **No Orchestra/Testbench** - standalone capable
 
-**Impact:** Package is now production-ready with clear requirements.
+**Impact:** Package is now production-ready, lightweight, and works standalone.
 
 ---
 
@@ -29,6 +45,7 @@ This document summarizes all improvements made to modernize the Laravel ICS pack
 - No static analysis
 - No code formatting standards
 - Bug in `array_search` (non-strict comparison)
+- Depended on Laravel's `config()` helper
 
 **After:**
 - Full PHP 8.0+ type declarations
@@ -36,8 +53,9 @@ This document summarizes all improvements made to modernize the Laravel ICS pack
 - Laravel Pint for consistent formatting
 - Fixed array_search bug
 - Better timezone handling with UTC conversion
+- **Standalone config** - no Laravel dependency
 
-**Impact:** Fewer bugs, better IDE support, easier maintenance.
+**Impact:** Fewer bugs, better IDE support, easier maintenance, works anywhere.
 
 ---
 
@@ -47,7 +65,38 @@ This document summarizes all improvements made to modernize the Laravel ICS pack
 - No CI/CD
 
 **After:**
-- 20+ comprehensive unit tests
+- 22+ comprehensive unit tests
+- PHPUnit configuration
+- GitHub Actions CI testing across PHP 8.0-8.3
+- **Plain PHPUnit** - no Orchestra/Testbench needed
+- Faster test execution
+
+**Impact:** Confidence in code quality, automated testing, faster feedback.
+
+---
+
+### 4. Standalone Capability (New!)
+**Before:**
+- Required Laravel's `config()` helper
+- Only worked in Laravel applications
+- Heavy Orchestra/Testbench for testing
+
+**After:**
+- **Works standalone** in any PHP project
+- Optional config parameter in constructor
+- Still integrates seamlessly with Laravel via ServiceProvider
+- Much lighter dependency footprint
+
+**Usage:**
+```php
+// Standalone
+$ics = new ICS($properties, $config);
+
+// Laravel (automatic)
+$ics = new ICS($properties); // Config from config/ics.php
+```
+
+**Impact:** Package is now accessible to non-Laravel users while maintaining Laravel compatibility.
 - Feature tests for service provider
 - PHPUnit configuration
 - GitHub Actions CI testing across:
