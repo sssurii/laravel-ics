@@ -2,7 +2,7 @@
     "name": "sssurii/laravel-ics",
     "description": "Laravel package to create iCalendar / ICS files. Send new event invitations via Email and can cancel or update already sent invitation.",
     "type": "library",
-    "keywords":["laravel", "ics", "event", "invitation", "icalendar"],
+    "keywords": ["laravel", "ics", "event", "invitation", "icalendar", "calendar"],
     "license": "MIT",
     "authors": [
         {
@@ -10,14 +10,35 @@
             "email": "sssurii.dev@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "homepage": "https://github.com/sssurii/laravel-ics",
+    "support": {
+        "issues": "https://github.com/sssurii/laravel-ics/issues",
+        "source": "https://github.com/sssurii/laravel-ics"
+    },
     "require": {
-        
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "illuminate/support": "^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5|^10.0",
+        "phpstan/phpstan": "^1.10",
+        "laravel/pint": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "INSAN\\ICS\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "INSAN\\ICS\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/pint",
+        "analyse": "vendor/bin/phpstan analyse"
     },
     "extra": {
         "laravel": {
@@ -25,5 +46,10 @@
                 "INSAN\\ICS\\ICSServiceProvider"
             ]
         }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
     }
 }

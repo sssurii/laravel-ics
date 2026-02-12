@@ -3,6 +3,7 @@
 namespace INSAN\ICS;
 
 use DateTime;
+use DateTimeZone;
 
 class ICS
 {
@@ -12,6 +13,10 @@ class ICS
     protected array $properties = [];
 
     private string $organiser = '';
+    
+    private array $attendees = [];
+    
+    private array $config = [];
 
     private array $available_properties = [
         'categories',
@@ -24,6 +29,9 @@ class ICS
         'url',
         'uid',
         'sequence',
+        'status',
+        'transp',
+        'class',
     ];
 
     private array $header_properties = [
@@ -35,20 +43,27 @@ class ICS
         'BEGIN:VEVENT',
     ];
 
-    public function __construct($properties = [])
+    public function __construct(array $properties = [], array $config = [])
     {
+        $this->config = array_merge([
+            'DAY_LIGHT_SAVING' => false,
+            'DAY_LIGHT_SAVING_START_MONTH' => '03',
+            'DAY_LIGHT_SAVING_END_MONTH' => '10',
+            'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+        ], $config);
+        
         $this->set($properties, false);
     }
 
-    public function set($properties, $value)
+    public function set(array|string $properties, mixed $value = null): void
     {
         if (is_array($properties)) {
-            foreach ($properties as $attribute => $value) {
-                $this->set($attribute, $value);
+            foreach ($properties as $attribute => $val) {
+                $this->set($attribute, $val);
             }
         } else {
             if (in_array($properties, $this->available_properties)) {
-                $this->properties[$properties] = $this->sanitizeValue($value, $properties);
+                $this->properties[$properties] = $this->sanitizeValue((string) $value, $properties);
             }
         }
     }
@@ -67,6 +82,11 @@ class ICS
 
         if ($this->getOrganizer()) {
             $ics_properties[] = $this->getOrganizer();
+        }
+        
+        // Add attendees
+        foreach ($this->getAttendees() as $attendee) {
+            $ics_properties[] = $attendee;
         }
 
         $ics_properties = $this->addDefaultFooterProperties($ics_properties);
@@ -87,22 +107,30 @@ class ICS
         return $value;
     }
 
-    private function formatTimestamp(string $timestamp)
+    private function formatTimestamp(string $timestamp): string
     {
-        $day_light_start = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('ics.DAY_LIGHT_SAVING_START_MONTH'));
-        $day_light_end = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('ics.DAY_LIGHT_SAVING_END_MONTH'));
-
         $datetime = new DateTime($timestamp);
-        if (
-            config('ics.DAY_LIGHT_SAVING')
-            && $datetime->format(self::DATE_FORMAT) >= date(self::DATE_FORMAT, $day_light_start)
-            && $datetime->format(self::DATE_FORMAT) <= date(self::DATE_FORMAT, $day_light_end)
-        ) {
-            $datetime->modify('-' . config('ics.DAY_LIGHT_SAVING_OFFSET'));
+        
+        // If daylight saving is enabled and configured
+        if ($this->config['DAY_LIGHT_SAVING']) {
+            $dayLightStartMonth = $this->config['DAY_LIGHT_SAVING_START_MONTH'];
+            $dayLightEndMonth = $this->config['DAY_LIGHT_SAVING_END_MONTH'];
+            $offset = $this->config['DAY_LIGHT_SAVING_OFFSET'];
+            
+            $year = $datetime->format('Y');
+            $dayLightStart = strtotime("last sunday of {$year}-{$dayLightStartMonth}");
+            $dayLightEnd = strtotime("last sunday of {$year}-{$dayLightEndMonth}");
+            
+            $currentTimestamp = $datetime->getTimestamp();
+            
+            if ($currentTimestamp >= $dayLightStart && $currentTimestamp <= $dayLightEnd) {
+                $datetime->modify("-{$offset}");
+            }
         }
-
+        
+        // Convert to UTC for ICS format
+        $datetime->setTimezone(new DateTimeZone('UTC'));
+        
         return $datetime->format(self::DATETIME_FORMAT);
     }
 
@@ -121,11 +149,47 @@ class ICS
         return $this->organiser;
     }
 
+    /**
+     * Add an attendee to the event
+     * 
+     * @param string $email Attendee email address
+     * @param string $name Attendee name (optional)
+     * @param string $role Role (REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT)
+     * @param string $rsvp Whether RSVP is expected (TRUE or FALSE)
+     * @return void
+     */
+    public function addAttendee(
+        string $email,
+        string $name = '',
+        string $role = 'REQ-PARTICIPANT',
+        string $rsvp = 'TRUE'
+    ): void {
+        $attendee = 'ATTENDEE;ROLE=' . $role . ';RSVP=' . $rsvp;
+        
+        if ($name) {
+            $attendee .= ';CN=' . $name;
+        }
+        
+        $attendee .= ':MAILTO:' . $email;
+        
+        $this->attendees[] = $attendee;
+    }
+    
+    /**
+     * Get all attendees
+     * 
+     * @return array
+     */
+    public function getAttendees(): array
+    {
+        return $this->attendees;
+    }
+
     public function markEventCancel(): void
     {
         $method_key = array_search('METHOD:REQUEST', $this->header_properties);
 
-        if ($method_key) {
+        if ($method_key !== false) {
             $this->header_properties[$method_key] = 'METHOD:CANCEL';
         }
     }

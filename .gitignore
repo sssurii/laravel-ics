@@ -3,6 +3,16 @@
 /storage/*.key
 /vendor
 .env
+.env.backup
 .phpunit.result.cache
+.phpunit.cache
 composer.lock
 .idea/
+.vscode/
+.DS_Store
+Thumbs.db
+coverage/
+*.cache
+.php_cs.cache
+.php-cs-fixer.cache
+phpstan.neon.dist
