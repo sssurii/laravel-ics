@@ -174,4 +174,65 @@ class ICSTest extends TestCase
         $this->assertStringContainsString('CLASS:PUBLIC', $output);
         $this->assertStringContainsString('PRIORITY:5', $output);
     }
+
+    public function test_can_add_single_attendee(): void
+    {
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+        ]);
+
+        $ics->addAttendee('attendee@example.com', 'John Doe');
+        $output = $ics->toString();
+
+        $this->assertStringContainsString('ATTENDEE', $output);
+        $this->assertStringContainsString('MAILTO:attendee@example.com', $output);
+        $this->assertStringContainsString('CN=John Doe', $output);
+    }
+
+    public function test_can_add_multiple_attendees(): void
+    {
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+        ]);
+
+        $ics->addAttendee('attendee1@example.com', 'John Doe');
+        $ics->addAttendee('attendee2@example.com', 'Jane Smith');
+        $output = $ics->toString();
+
+        $this->assertStringContainsString('MAILTO:attendee1@example.com', $output);
+        $this->assertStringContainsString('MAILTO:attendee2@example.com', $output);
+        $this->assertStringContainsString('CN=John Doe', $output);
+        $this->assertStringContainsString('CN=Jane Smith', $output);
+    }
+
+    public function test_attendee_with_role_and_rsvp(): void
+    {
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+        ]);
+
+        $ics->addAttendee('attendee@example.com', 'John Doe', 'OPT-PARTICIPANT', 'FALSE');
+        $output = $ics->toString();
+
+        $this->assertStringContainsString('ROLE=OPT-PARTICIPANT', $output);
+        $this->assertStringContainsString('RSVP=FALSE', $output);
+    }
+
+    public function test_attendee_without_name(): void
+    {
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+        ]);
+
+        $ics->addAttendee('attendee@example.com');
+        $output = $ics->toString();
+
+        $this->assertStringContainsString('ATTENDEE', $output);
+        $this->assertStringContainsString('MAILTO:attendee@example.com', $output);
+        $this->assertStringNotContainsString('CN=', $output);
+    }
 }

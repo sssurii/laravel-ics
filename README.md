@@ -11,10 +11,12 @@ Laravel package to create iCalendar/ICS files. Send new event invitations via Em
 - ✅ Send event invitations via email
 - ✅ Cancel existing invitations
 - ✅ Update existing invitations
-- ✅ Support for organizers
+- ✅ Support for organizers and attendees
+- ✅ Configurable RSVP and attendee roles
 - ✅ Lightweight and easy to use
 - ✅ Modern Laravel support (9.x, 10.x, 11.x)
 - ✅ PHP 8.0+ support
+- ✅ Comprehensive test coverage
 
 ## Requirements
 
@@ -67,6 +69,24 @@ $ics_content = $ics_file->toString();
 ```php
 $ics_file = new ICS($event_properties);
 $ics_file->setOrganizer('Surinder Singh', 'sssurii.dev@gmail.com');
+$ics_content = $ics_file->toString();
+```
+
+### Adding Attendees
+
+```php
+$ics_file = new ICS($event_properties);
+$ics_file->setOrganizer('Surinder Singh', 'sssurii.dev@gmail.com');
+
+// Add required attendees
+$ics_file->addAttendee('alice@example.com', 'Alice Smith', 'REQ-PARTICIPANT', 'TRUE');
+
+// Add optional attendees
+$ics_file->addAttendee('bob@example.com', 'Bob Johnson', 'OPT-PARTICIPANT', 'TRUE');
+
+// Add attendee without name
+$ics_file->addAttendee('charlie@example.com');
+
 $ics_content = $ics_file->toString();
 ```
 

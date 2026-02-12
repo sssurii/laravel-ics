@@ -13,6 +13,8 @@ class ICS
     protected array $properties = [];
 
     private string $organiser = '';
+    
+    private array $attendees = [];
 
     private array $available_properties = [
         'categories',
@@ -71,6 +73,11 @@ class ICS
 
         if ($this->getOrganizer()) {
             $ics_properties[] = $this->getOrganizer();
+        }
+        
+        // Add attendees
+        foreach ($this->getAttendees() as $attendee) {
+            $ics_properties[] = $attendee;
         }
 
         $ics_properties = $this->addDefaultFooterProperties($ics_properties);
@@ -131,6 +138,42 @@ class ICS
     public function getOrganizer(): string
     {
         return $this->organiser;
+    }
+
+    /**
+     * Add an attendee to the event
+     * 
+     * @param string $email Attendee email address
+     * @param string $name Attendee name (optional)
+     * @param string $role Role (REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT)
+     * @param string $rsvp Whether RSVP is expected (TRUE or FALSE)
+     * @return void
+     */
+    public function addAttendee(
+        string $email,
+        string $name = '',
+        string $role = 'REQ-PARTICIPANT',
+        string $rsvp = 'TRUE'
+    ): void {
+        $attendee = 'ATTENDEE;ROLE=' . $role . ';RSVP=' . $rsvp;
+        
+        if ($name) {
+            $attendee .= ';CN=' . $name;
+        }
+        
+        $attendee .= ':MAILTO:' . $email;
+        
+        $this->attendees[] = $attendee;
+    }
+    
+    /**
+     * Get all attendees
+     * 
+     * @return array
+     */
+    public function getAttendees(): array
+    {
+        return $this->attendees;
     }
 
     public function markEventCancel(): void

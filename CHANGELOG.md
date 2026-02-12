@@ -5,7 +5,10 @@ All notable changes to `laravel-ics` will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- Comprehensive test suite with PHPUnit
+- Attendee support with `addAttendee()` method
+- Support for attendee roles (REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT)
+- RSVP configuration for attendees
+- Comprehensive test suite with PHPUnit (20+ test cases)
 - PHPStan for static code analysis
 - Laravel Pint for code formatting
 - Modern GitHub Actions CI/CD workflow
@@ -14,7 +17,9 @@ All notable changes to `laravel-ics` will be documented in this file.
 - Additional ICS properties: `status`, `transp`, `class`
 - Comprehensive documentation in README
 - MIT License file
-- This CHANGELOG file
+- CHANGELOG file
+- CONTRIBUTING guide
+- Example files for common use cases
 
 ### Changed
 - Improved composer.json with proper version constraints
