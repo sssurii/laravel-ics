@@ -4,26 +4,27 @@ All notable changes to `laravel-ics` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Standalone configuration support via optional second constructor parameter
+- Tests for custom configuration parameter
+- Documentation for standalone usage
+- WHY-NO-TESTBENCH.md explaining the rationale for removing Orchestra/Testbench
+
 ### Changed
-- **BREAKING (minor)**: ICS constructor now accepts optional second parameter `$config` for standalone usage
-- Removed `orchestra/testbench` dependency - package now works standalone without Laravel
-- Refactored to not depend on Laravel's `config()` helper
+- ICS constructor now accepts optional second parameter `$config` for standalone usage
+- Refactored to not depend on Laravel's `config()` helper - now uses instance config
 - Simplified test suite - now uses plain PHPUnit instead of Orchestra Testbench
 - Updated CI/CD workflow to test across PHP versions only (no longer testing Laravel matrix)
 - Package can now be used in non-Laravel PHP projects
 
-### Added
-- Standalone configuration support via constructor parameter
-- Tests for custom configuration parameter
-- Documentation for standalone usage
-
 ### Removed
 - Orchestra Testbench dependency (reduces package weight significantly)
-- Laravel-specific feature tests (ServiceProvider still works with Laravel)
+- Feature tests directory (ServiceProvider still works perfectly with Laravel)
 
 **Migration Guide:**
-- Existing Laravel users: No changes needed! Package works the same way.
-- Standalone users: Can now pass config as second parameter: `new ICS($props, $config)`
+- ✅ **No migration needed!** Existing Laravel users don't need to change anything.
+- New feature: Standalone users can now pass config as second parameter: `new ICS($props, $config)`
+- The change is 100% backward compatible.
 
 ---
 

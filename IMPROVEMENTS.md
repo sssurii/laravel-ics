@@ -97,16 +97,10 @@ $ics = new ICS($properties); // Config from config/ics.php
 ```
 
 **Impact:** Package is now accessible to non-Laravel users while maintaining Laravel compatibility.
-- Feature tests for service provider
-- PHPUnit configuration
-- GitHub Actions CI testing across:
-  - PHP 8.0, 8.1, 8.2, 8.3
-  - Laravel 9, 10, 11
-  - Multiple dependency versions
-
-**Impact:** Confidence in code quality, automated testing on every PR.
 
 ---
+
+### 5. Documentation
 
 ### 4. Documentation
 **Before:**
