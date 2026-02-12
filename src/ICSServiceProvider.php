@@ -13,7 +13,10 @@ class ICSServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->make('INSAN\ICS\ICS');
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/ics.php',
+            'ics'
+        );
     }
 
     /**
@@ -23,8 +26,10 @@ class ICSServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/../config/ics.php' => config_path('ics.php'),
-        ], 'config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/ics.php' => config_path('ics.php'),
+            ], 'config');
+        }
     }
 }

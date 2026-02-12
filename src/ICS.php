@@ -3,6 +3,7 @@
 namespace INSAN\ICS;
 
 use DateTime;
+use DateTimeZone;
 
 class ICS
 {
@@ -24,6 +25,9 @@ class ICS
         'url',
         'uid',
         'sequence',
+        'status',
+        'transp',
+        'class',
     ];
 
     private array $header_properties = [
@@ -35,20 +39,20 @@ class ICS
         'BEGIN:VEVENT',
     ];
 
-    public function __construct($properties = [])
+    public function __construct(array $properties = [])
     {
         $this->set($properties, false);
     }
 
-    public function set($properties, $value)
+    public function set(array|string $properties, mixed $value = null): void
     {
         if (is_array($properties)) {
-            foreach ($properties as $attribute => $value) {
-                $this->set($attribute, $value);
+            foreach ($properties as $attribute => $val) {
+                $this->set($attribute, $val);
             }
         } else {
             if (in_array($properties, $this->available_properties)) {
-                $this->properties[$properties] = $this->sanitizeValue($value, $properties);
+                $this->properties[$properties] = $this->sanitizeValue((string) $value, $properties);
             }
         }
     }
@@ -87,22 +91,30 @@ class ICS
         return $value;
     }
 
-    private function formatTimestamp(string $timestamp)
+    private function formatTimestamp(string $timestamp): string
     {
-        $day_light_start = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('ics.DAY_LIGHT_SAVING_START_MONTH'));
-        $day_light_end = strtotime('last sunday of ' . date('Y') . '-'
-                                     . config('ics.DAY_LIGHT_SAVING_END_MONTH'));
-
         $datetime = new DateTime($timestamp);
-        if (
-            config('ics.DAY_LIGHT_SAVING')
-            && $datetime->format(self::DATE_FORMAT) >= date(self::DATE_FORMAT, $day_light_start)
-            && $datetime->format(self::DATE_FORMAT) <= date(self::DATE_FORMAT, $day_light_end)
-        ) {
-            $datetime->modify('-' . config('ics.DAY_LIGHT_SAVING_OFFSET'));
+        
+        // If daylight saving is enabled and configured
+        if (config('ics.DAY_LIGHT_SAVING', false)) {
+            $dayLightStartMonth = config('ics.DAY_LIGHT_SAVING_START_MONTH', '03');
+            $dayLightEndMonth = config('ics.DAY_LIGHT_SAVING_END_MONTH', '10');
+            $offset = config('ics.DAY_LIGHT_SAVING_OFFSET', '1 hours');
+            
+            $year = $datetime->format('Y');
+            $dayLightStart = strtotime("last sunday of {$year}-{$dayLightStartMonth}");
+            $dayLightEnd = strtotime("last sunday of {$year}-{$dayLightEndMonth}");
+            
+            $currentTimestamp = $datetime->getTimestamp();
+            
+            if ($currentTimestamp >= $dayLightStart && $currentTimestamp <= $dayLightEnd) {
+                $datetime->modify("-{$offset}");
+            }
         }
-
+        
+        // Convert to UTC for ICS format
+        $datetime->setTimezone(new DateTimeZone('UTC'));
+        
         return $datetime->format(self::DATETIME_FORMAT);
     }
 
@@ -125,7 +137,7 @@ class ICS
     {
         $method_key = array_search('METHOD:REQUEST', $this->header_properties);
 
-        if ($method_key) {
+        if ($method_key !== false) {
             $this->header_properties[$method_key] = 'METHOD:CANCEL';
         }
     }
