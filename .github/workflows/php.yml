@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -57,6 +59,8 @@ jobs:
 
   code-quality:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     name: Code Quality
 
     steps:
