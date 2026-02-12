@@ -1,14 +1,23 @@
 <?php
 
 /**
- * Basic Event Invitation Example
+ * Basic Event Invitation Example (Standalone)
  * 
- * This example shows how to create a simple event invitation with ICS.
+ * This example shows how to create a simple event invitation with ICS
+ * without requiring Laravel.
  */
 
 require __DIR__ . '/../vendor/autoload.php';
 
 use INSAN\ICS\ICS;
+
+// Optional: Custom configuration (if needed)
+$config = [
+    'DAY_LIGHT_SAVING' => false,
+    'DAY_LIGHT_SAVING_START_MONTH' => '03',
+    'DAY_LIGHT_SAVING_END_MONTH' => '10',
+    'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+];
 
 // Create a basic event
 $event_properties = [
@@ -23,7 +32,8 @@ $event_properties = [
     'url' => 'https://meet.example.com/team-meeting',
 ];
 
-$ics = new ICS($event_properties);
+// Create ICS instance (config is optional, uses defaults if not provided)
+$ics = new ICS($event_properties, $config);
 
 // Set the organizer
 $ics->setOrganizer('John Doe', 'john.doe@example.com');
@@ -43,5 +53,5 @@ echo $ics_content;
 // Or save to file
 // file_put_contents('meeting.ics', $ics_content);
 
-// Or send via email
-// Mail::send(...);
+// Or send via email (using any mail library)
+// mail('recipient@example.com', 'Event Invitation', 'Please see attached', ...);

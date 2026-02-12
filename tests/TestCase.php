@@ -2,23 +2,17 @@
 
 namespace INSAN\ICS\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
-abstract class TestCase extends Orchestra
+abstract class TestCase extends BaseTestCase
 {
-    protected function getPackageProviders($app): array
+    protected function getDefaultConfig(): array
     {
         return [
-            \INSAN\ICS\ICSServiceProvider::class,
+            'DAY_LIGHT_SAVING' => false,
+            'DAY_LIGHT_SAVING_START_MONTH' => '03',
+            'DAY_LIGHT_SAVING_END_MONTH' => '10',
+            'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
         ];
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        // Setup default config values
-        $app['config']->set('ics.DAY_LIGHT_SAVING', false);
-        $app['config']->set('ics.DAY_LIGHT_SAVING_START_MONTH', '03');
-        $app['config']->set('ics.DAY_LIGHT_SAVING_END_MONTH', '10');
-        $app['config']->set('ics.DAY_LIGHT_SAVING_OFFSET', '1 hours');
     }
 }

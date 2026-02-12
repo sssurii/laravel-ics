@@ -4,6 +4,31 @@ All notable changes to `laravel-ics` will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING (minor)**: ICS constructor now accepts optional second parameter `$config` for standalone usage
+- Removed `orchestra/testbench` dependency - package now works standalone without Laravel
+- Refactored to not depend on Laravel's `config()` helper
+- Simplified test suite - now uses plain PHPUnit instead of Orchestra Testbench
+- Updated CI/CD workflow to test across PHP versions only (no longer testing Laravel matrix)
+- Package can now be used in non-Laravel PHP projects
+
+### Added
+- Standalone configuration support via constructor parameter
+- Tests for custom configuration parameter
+- Documentation for standalone usage
+
+### Removed
+- Orchestra Testbench dependency (reduces package weight significantly)
+- Laravel-specific feature tests (ServiceProvider still works with Laravel)
+
+**Migration Guide:**
+- Existing Laravel users: No changes needed! Package works the same way.
+- Standalone users: Can now pass config as second parameter: `new ICS($props, $config)`
+
+---
+
+## [1.0.0] - Previous Release
+
 ### Added
 - Attendee support with `addAttendee()` method
 - Support for attendee roles (REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT)

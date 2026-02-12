@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sssurii/laravel-ics.svg?style=flat-square)](https://packagist.org/packages/sssurii/laravel-ics)
 [![Total Downloads](https://img.shields.io/packagist/dt/sssurii/laravel-ics.svg?style=flat-square)](https://packagist.org/packages/sssurii/laravel-ics)
 
-Laravel package to create iCalendar/ICS files. Send new event invitations via Email and can cancel or update already sent invitation.
+Lightweight PHP library to create iCalendar/ICS files. Works standalone or with Laravel. Send event invitations via Email and can cancel or update already sent invitation.
 
 ## Features
 
@@ -13,15 +13,16 @@ Laravel package to create iCalendar/ICS files. Send new event invitations via Em
 - ✅ Update existing invitations
 - ✅ Support for organizers and attendees
 - ✅ Configurable RSVP and attendee roles
-- ✅ Lightweight and easy to use
-- ✅ Modern Laravel support (9.x, 10.x, 11.x)
+- ✅ **Works standalone or with Laravel**
+- ✅ Lightweight - no heavy dependencies
+- ✅ Optional Laravel integration (9.x, 10.x, 11.x)
 - ✅ PHP 8.0+ support
 - ✅ Comprehensive test coverage
 
 ## Requirements
 
 - PHP 8.0 or higher
-- Laravel 9.x, 10.x, or 11.x
+- Laravel 9.x, 10.x, or 11.x (optional - only if using Laravel integration)
 
 ## Installation
 
@@ -31,19 +32,21 @@ Install using composer:
 composer require sssurii/laravel-ics
 ```
 
-### Publish Config (Optional)
+### Laravel Integration (Optional)
 
-To publish the config file, run the vendor publish command:
+If you're using Laravel, the package will automatically register via package discovery.
+
+To publish the config file, run:
 
 ```bash
 php artisan vendor:publish --provider="INSAN\ICS\ICSServiceProvider" --tag=config
 ```
 
-This will create a `config/ics.php` file where you can configure daylight saving time settings if needed.
+This will create a `config/ics.php` file where you can configure daylight saving time settings.
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (Standalone)
 
 ```php
 use INSAN\ICS\ICS;
@@ -63,6 +66,25 @@ $event_properties = [
 $ics_file = new ICS($event_properties);
 $ics_content = $ics_file->toString();
 ```
+
+### With Custom Configuration
+
+```php
+use INSAN\ICS\ICS;
+
+// Pass custom configuration as second parameter
+$config = [
+    'DAY_LIGHT_SAVING' => true,
+    'DAY_LIGHT_SAVING_START_MONTH' => '03',
+    'DAY_LIGHT_SAVING_END_MONTH' => '10',
+    'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+];
+
+$ics_file = new ICS($event_properties, $config);
+$ics_content = $ics_file->toString();
+```
+
+**Note:** When using Laravel, the config is automatically loaded from `config/ics.php`. In standalone mode, you can pass it directly or use the defaults.
 
 ### Setting Organizer
 
@@ -190,7 +212,7 @@ return [
 ];
 ```
 
-You can also set these in your `.env` file:
+You can also set these in your `.env` file (Laravel only):
 
 ```env
 DAY_LIGHT_SAVING=false
@@ -198,13 +220,30 @@ DAY_LIGHT_SAVING_START_MONTH=03
 DAY_LIGHT_SAVING_END_MONTH=10
 ```
 
-## Laravel Version Compatibility
+### Standalone Configuration
 
-| Laravel Version | PHP Version | Package Version |
-|----------------|-------------|-----------------|
-| 11.x | 8.2 - 8.3 | 1.x |
-| 10.x | 8.1 - 8.3 | 1.x |
-| 9.x | 8.0 - 8.3 | 1.x |
+In standalone mode (without Laravel), pass configuration directly:
+
+```php
+$config = [
+    'DAY_LIGHT_SAVING' => false,
+    'DAY_LIGHT_SAVING_START_MONTH' => '03',
+    'DAY_LIGHT_SAVING_END_MONTH' => '10',
+    'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+];
+
+$ics = new ICS($event_properties, $config);
+```
+
+## Version Compatibility
+
+| Component | Version | Notes |
+|-----------|---------|-------|
+| PHP | 8.0 - 8.3 | Required |
+| Laravel | 9.x, 10.x, 11.x | Optional - for Laravel integration only |
+| Standalone | Any | Works without Laravel |
+
+**The package works standalone without Laravel!** Laravel integration is optional and provides automatic config loading via the ServiceProvider.
 
 ## Testing
 

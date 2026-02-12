@@ -15,6 +15,8 @@ class ICS
     private string $organiser = '';
     
     private array $attendees = [];
+    
+    private array $config = [];
 
     private array $available_properties = [
         'categories',
@@ -41,8 +43,15 @@ class ICS
         'BEGIN:VEVENT',
     ];
 
-    public function __construct(array $properties = [])
+    public function __construct(array $properties = [], array $config = [])
     {
+        $this->config = array_merge([
+            'DAY_LIGHT_SAVING' => false,
+            'DAY_LIGHT_SAVING_START_MONTH' => '03',
+            'DAY_LIGHT_SAVING_END_MONTH' => '10',
+            'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+        ], $config);
+        
         $this->set($properties, false);
     }
 
@@ -103,10 +112,10 @@ class ICS
         $datetime = new DateTime($timestamp);
         
         // If daylight saving is enabled and configured
-        if (config('ics.DAY_LIGHT_SAVING', false)) {
-            $dayLightStartMonth = config('ics.DAY_LIGHT_SAVING_START_MONTH', '03');
-            $dayLightEndMonth = config('ics.DAY_LIGHT_SAVING_END_MONTH', '10');
-            $offset = config('ics.DAY_LIGHT_SAVING_OFFSET', '1 hours');
+        if ($this->config['DAY_LIGHT_SAVING']) {
+            $dayLightStartMonth = $this->config['DAY_LIGHT_SAVING_START_MONTH'];
+            $dayLightEndMonth = $this->config['DAY_LIGHT_SAVING_END_MONTH'];
+            $offset = $this->config['DAY_LIGHT_SAVING_OFFSET'];
             
             $year = $datetime->format('Y');
             $dayLightStart = strtotime("last sunday of {$year}-{$dayLightStartMonth}");

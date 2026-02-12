@@ -235,4 +235,40 @@ class ICSTest extends TestCase
         $this->assertStringContainsString('MAILTO:attendee@example.com', $output);
         $this->assertStringNotContainsString('CN=', $output);
     }
+
+    public function test_can_pass_custom_config(): void
+    {
+        $config = [
+            'DAY_LIGHT_SAVING' => false,
+            'DAY_LIGHT_SAVING_START_MONTH' => '03',
+            'DAY_LIGHT_SAVING_END_MONTH' => '10',
+            'DAY_LIGHT_SAVING_OFFSET' => '1 hours',
+        ];
+
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+            'dtstart' => '2024-12-25 09:00',
+        ], $config);
+
+        $output = $ics->toString();
+
+        // Should generate output successfully with custom config
+        $this->assertStringContainsString('SUMMARY:Test Event', $output);
+        $this->assertStringContainsString('UID:test-event', $output);
+    }
+
+    public function test_works_without_config_parameter(): void
+    {
+        // Test backward compatibility - config parameter is optional
+        $ics = new ICS([
+            'uid' => 'test-event',
+            'summary' => 'Test Event',
+        ]);
+
+        $output = $ics->toString();
+
+        $this->assertStringContainsString('SUMMARY:Test Event', $output);
+        $this->assertStringContainsString('UID:test-event', $output);
+    }
 }
